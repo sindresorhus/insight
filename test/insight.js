@@ -1,4 +1,4 @@
-import objectValues from 'object-values';
+import {setTimeout as delay, setImmediate as setImmediatePromise} from 'node:timers/promises';
 import sinon from 'sinon';
 import test from 'ava';
 import Insight from '../lib/index.js';
@@ -7,82 +7,100 @@ test('throw exception when trackingCode or packageName is not provided', t => {
 	/* eslint-disable no-new */
 	t.throws(() => {
 		new Insight({});
-	}, Error);
+	}, {instanceOf: Error});
 
 	t.throws(() => {
 		new Insight({trackingCode: 'xxx'});
-	}, Error);
+	}, {instanceOf: Error});
 
 	t.throws(() => {
 		new Insight({packageName: 'xxx'});
-	}, Error);
+	}, {instanceOf: Error});
 	/* eslint-enable no-new */
 });
 
-test.cb('forks a new tracker right after track()', t => {
+test('forks a new tracker right after track()', async t => {
 	const insight = newInsight();
 	insight.track('test');
-	setImmediate(() => {
-		t.deepEqual(forkedCalls(insight), [
-			// A single fork with a single path
-			['/test'],
-		]);
-		t.end();
-	});
+
+	await setImmediatePromise();
+
+	t.deepEqual(forkedCalls(insight), [
+		// A single fork with a single path
+		['/test'],
+	]);
 });
 
-test.cb('only forks once if many pages are tracked in the same event loop run', t => {
+test('only forks once if many pages are tracked in the same event loop run', async t => {
 	const insight = newInsight();
 	insight.track('foo');
 	insight.track('bar');
-	setImmediate(() => {
-		t.deepEqual(forkedCalls(insight), [
-			// A single fork with both paths
-			['/foo', '/bar'],
-		]);
-		t.end();
-	});
+
+	await setImmediatePromise();
+
+	t.deepEqual(forkedCalls(insight), [
+		// A single fork with both paths
+		['/foo', '/bar'],
+	]);
 });
 
-test.cb('debounces forking every 100 millis (close together)', t => {
+test('debounces forking every 100 millis (close together)', async t => {
 	const insight = newInsight();
 	insight.track('0');
-	setTimeout(() => insight.track('50'), 50);
-	setTimeout(() => insight.track('100'), 100);
-	setTimeout(() => insight.track('150'), 150);
-	setTimeout(() => insight.track('200'), 200);
-	setTimeout(() => {
-		t.deepEqual(forkedCalls(insight), [
-			// The first one is sent straight away because of the leading debounce
-			['/0'],
-			// The others are grouped together because they're all < 100ms apart
-			['/50', '/100', '/150', '/200'],
-		]);
-		t.end();
-	}, 1000);
+
+	await delay(50);
+	insight.track('50');
+
+	await delay(50);
+	insight.track('100');
+
+	await delay(50);
+	insight.track('150');
+
+	await delay(50);
+	insight.track('200');
+
+	await delay(1000);
+
+	t.deepEqual(forkedCalls(insight), [
+		// The first one is sent straight away because of the leading debounce
+		['/0'],
+		// The others are grouped together because they're all < 100ms apart
+		['/50', '/100', '/150', '/200'],
+	]);
 });
 
-test.cb('debounces forking every 100 millis (far apart)', t => {
+test('debounces forking every 100 millis (far apart)', async t => {
 	const insight = newInsight();
 	insight.track('0');
-	setTimeout(() => insight.track('50'), 50);
-	setTimeout(() => insight.track('100'), 100);
-	setTimeout(() => insight.track('150'), 150);
-	setTimeout(() => insight.track('300'), 300);
-	setTimeout(() => insight.track('350'), 350);
-	setTimeout(() => {
-		t.deepEqual(forkedCalls(insight), [
-			// Leading call
-			['/0'],
-			// Sent together since there is an empty 100ms window afterwards
-			['/50', '/100', '/150'],
-			// Sent on its own because it's a new leading debounce
-			['/300'],
-			// Finally, the last one is sent
-			['/350'],
-		]);
-		t.end();
-	}, 1000);
+
+	await delay(50);
+	insight.track('50');
+
+	await delay(50);
+	insight.track('100');
+
+	await delay(50);
+	insight.track('150');
+
+	await delay(150);
+	insight.track('300');
+
+	await delay(50);
+	insight.track('350');
+
+	await delay(1000);
+
+	t.deepEqual(forkedCalls(insight), [
+		// Leading call
+		['/0'],
+		// Sent together since there is an empty 100ms window afterwards
+		['/50', '/100', '/150'],
+		// Sent on its own because it's a new leading debounce
+		['/300'],
+		// Finally, the last one is sent
+		['/350'],
+	]);
 });
 
 // Return a valid insight instance which doesn't actually send analytics (mocked)
@@ -104,5 +122,7 @@ function newInsight() {
 //   ['/three', 'four'],    // second call tracked 2 more paths
 // ]
 function forkedCalls(insight) {
-	return insight._fork.args.map(callArgs => objectValues(callArgs[0].queue).map(q => q.path));
+	return insight._fork.args.map(callArguments =>
+		Object.values(callArguments[0].queue).map(q => q.path),
+	);
 }

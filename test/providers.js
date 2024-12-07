@@ -2,8 +2,8 @@ import sinon from 'sinon';
 import test from 'ava';
 import Insight from '../lib/index.js';
 
-const pkg = 'yeoman';
-const ver = '0.0.0';
+const package_ = 'yeoman';
+const version = '0.0.0';
 
 let config;
 let insight;
@@ -16,8 +16,8 @@ test.beforeEach(() => {
 
 	insight = new Insight({
 		trackingCode: 'xxx',
-		packageName: pkg,
-		packageVersion: ver,
+		packageName: package_,
+		packageVersion: version,
 		config,
 	});
 });

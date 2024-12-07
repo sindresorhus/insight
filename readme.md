@@ -1,11 +1,13 @@
-# Insight [![Build Status](https://secure.travis-ci.org/yeoman/insight.svg?branch=master)](https://travis-ci.org/yeoman/insight)
+# Insight
 
 > Understand how your tool is being used by anonymously reporting usage metrics to [Google Analytics](https://www.google.com/analytics/) or [Yandex.Metrica](https://metrica.yandex.com)
 
+**This package is in maintenance mode. No new features will be added.**
+
 ## Install
 
-```
-$ npm install insight
+```sh
+npm install insight
 ```
 
 ## Access data / generate dashboards
@@ -45,13 +47,13 @@ Below is what Insight is capable of tracking. Individual implementation can choo
 ### Google Analytics
 
 ```js
-const Insight = require('insight');
-const pkg = require('./package.json');
+import Insight from 'insight';
+import packageJson from './package.json' with {type: 'json'};
 
 const insight = new Insight({
 	// Google Analytics tracking code
 	trackingCode: 'UA-XXXXXXXX-X',
-	pkg
+	pkg: packageJson
 });
 
 // Ask for permission the first time
@@ -74,14 +76,14 @@ insight.trackEvent({
 ### Yandex.Metrica
 
 ```js
-const Insight = require('insight');
-const pkg = require('./package.json');
+import Insight from 'insight';
+import packageJson from './package.json' with {type: 'json'};
 
 const insight = new Insight({
 	// Yandex.Metrica counter id
 	trackingCode: 'XXXXXXXXX'
 	trackingProvider: 'yandex',
-	pkg
+	pkg: packageJson
 });
 
 // Ask for permission the first time
