@@ -21,8 +21,3 @@ insight.track('hello', 'sindre');
 Then visit GA's Real Time dashboard and ensure data is showing up:
 
 ![analytics screenshot](screenshot-real-time.png)
-
-
-## Other Guidelines
-
-Please see Yeoman's [contributing docs](https://github.com/yeoman/yeoman/blob/master/contributing.md).
