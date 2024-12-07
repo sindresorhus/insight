@@ -1,11 +1,11 @@
-# Insight [![Build Status](https://secure.travis-ci.org/yeoman/insight.svg?branch=master)](https://travis-ci.org/yeoman/insight)
+# Insight
 
 > Understand how your tool is being used by anonymously reporting usage metrics to [Google Analytics](https://www.google.com/analytics/) or [Yandex.Metrica](https://metrica.yandex.com)
 
 ## Install
 
-```
-$ npm install insight
+```sh
+npm install insight
 ```
 
 ## Access data / generate dashboards

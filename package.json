@@ -3,7 +3,7 @@
 	"version": "0.11.1",
 	"description": "Understand how your tool is being used by anonymously reporting usage metrics to Google Analytics or Yandex.Metrica",
 	"license": "BSD-2-Clause",
-	"repository": "yeoman/insight",
+	"repository": "sindresorhus/insight",
 	"author": {
 		"name": "Sindre Sorhus",
 		"email": "sindresorhus@gmail.com",
