@@ -1,6 +1,6 @@
 {
 	"name": "insight",
-	"version": "0.11.1",
+	"version": "0.12.0",
 	"description": "Understand how your tool is being used by anonymously reporting usage metrics to Google Analytics or Yandex.Metrica",
 	"license": "BSD-2-Clause",
 	"repository": "sindresorhus/insight",
